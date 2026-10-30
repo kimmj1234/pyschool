@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: pyschool
+    runtime: python
+    plan: free
+    buildCommand: "echo no build"
+    startCommand: python server.py

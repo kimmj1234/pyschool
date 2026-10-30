@@ -1,0 +1,97 @@
+/* ===== 파이썬 편집기(직접 해보기) + 값 상자(boxes) + 순서 그림(flow) ===== */
+.pyed { margin: 0; border-radius: 16px; overflow: hidden; background: var(--code-bg); color: #e6e9f0; box-shadow: 0 12px 32px rgba(10, 20, 50, .16); border: 1px solid #2a3350; }
+.pyed-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 12px 10px 16px; background: rgba(255, 255, 255, .06); border-bottom: 1px solid rgba(255, 255, 255, .08); }
+.pyed-title { font-weight: 800; font-size: 14.5px; display: inline-flex; align-items: center; gap: 6px; }
+.pyed-chip { font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 99px; background: rgba(255, 255, 255, .1); color: #c5cde0; }
+.pyed-chip:empty { display: none; }
+.pyed-chip.ok { background: rgba(46, 157, 91, .25); color: #7ee2a8; }
+.pyed-chip.bad { background: rgba(255, 90, 77, .22); color: #ff9e9e; }
+.pyed-chip.wait { background: rgba(255, 212, 59, .18); color: #ffd479; }
+.pyed-actions { margin-left: auto; display: inline-flex; gap: 8px; }
+.pyed-btn { font: inherit; font-size: 13.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, .2); background: transparent; color: #e6e9f0; cursor: pointer; }
+.pyed-btn:hover { background: rgba(255, 255, 255, .1); }
+.pyed-btn.run { background: #fff; color: #111; border-color: #fff; }
+.pyed-btn.run:hover { background: #e9e9e9; }
+.pyed-btn:disabled { opacity: .55; cursor: progress; }
+.pyed-btn[hidden] { display: none; }
+.pyed-task { margin: 0; padding: 12px 16px; background: rgba(255, 212, 59, .12); border-bottom: 1px solid rgba(255, 255, 255, .08); font-size: 15px !important; line-height: 1.65 !important; color: #f3f4f8; }
+.pyed-task b { color: #ffd479; }
+#lesson .pyed-task code, #lesson .pyed-extra code { background: rgba(255, 255, 255, .12); color: #ffd479; }
+.pyed-code { background: var(--code-bg); }
+.pyed-plain { width: 100%; box-sizing: border-box; padding: 14px 16px; border: 0; outline: none; resize: vertical; background: var(--code-bg); color: #e6e9f0; font: 15.5px/1.65 "Cascadia Code", Consolas, "D2Coding", monospace; }
+.CodeMirror.cm-s-pyschool { height: auto; background: var(--code-bg); color: #e6e9f0; font: 15.5px/1.65 "Cascadia Code", Consolas, "D2Coding", monospace; padding: 8px 0; }
+.cm-s-pyschool .CodeMirror-gutters { background: var(--code-bg); border-right: 1px solid rgba(255, 255, 255, .08); }
+.cm-s-pyschool .CodeMirror-linenumber { color: #5f6b85; padding: 0 10px 0 6px; }
+.cm-s-pyschool .CodeMirror-cursor { border-left: 2px solid #fff; }
+.cm-s-pyschool .CodeMirror-selected, .cm-s-pyschool.CodeMirror-focused .CodeMirror-selected { background: rgba(120, 160, 255, .3); }
+.cm-s-pyschool .CodeMirror-matchingbracket { color: #fff !important; background: rgba(255, 255, 255, .22); outline: none; }
+.cm-s-pyschool .cm-keyword, .cm-s-pyschool .cm-operator { color: #ff9eb5; }
+.cm-s-pyschool .cm-builtin { color: #79c0ff; }
+.cm-s-pyschool .cm-string, .cm-s-pyschool .cm-string-2 { color: #a5e08c; }
+.cm-s-pyschool .cm-number, .cm-s-pyschool .cm-atom { color: #ffd479; }
+.cm-s-pyschool .cm-comment { color: #7c8aa5; font-style: italic; }
+.cm-s-pyschool .cm-def { color: #d2a8ff; }
+.cm-s-pyschool .cm-variable, .cm-s-pyschool .cm-variable-2, .cm-s-pyschool .cm-property { color: #e6e9f0; }
+.pyed-stdin { border-top: 1px solid rgba(255, 255, 255, .08); padding: 8px 16px 12px; }
+.pyed-stdin summary, .pyed-extra summary { cursor: pointer; font-size: 13.5px; font-weight: 700; color: #c5cde0; padding: 4px 0; display: flex; align-items: center; gap: 6px; }
+.pyed-stdin-box { width: 100%; box-sizing: border-box; margin-top: 6px; padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, .15); background: rgba(0, 0, 0, .25); color: #e6e9f0; font: 14.5px/1.6 "Cascadia Code", Consolas, monospace; resize: vertical; }
+.pyed-out { border-top: 1px solid rgba(255, 255, 255, .1); background: #0f1420; }
+.pyed-out-head { padding: 6px 16px; font-size: 12px; font-weight: 700; color: #8f9ab0; display: flex; align-items: center; gap: 5px; }
+.pyed-out-text { margin: 0; padding: 4px 16px 14px; min-height: 2.6em; max-height: 280px; overflow: auto; white-space: pre-wrap; word-break: break-word; color: #b9f0c3; font: 15px/1.65 "Cascadia Code", Consolas, "D2Coding", monospace; }
+.pyed-out-text .err { color: #ff9e9e; }
+.pyed-out-text .muted { color: #8f9ab0; }
+.pyed-verdict { margin: 0; padding: 10px 16px; font-size: 14.5px !important; font-weight: 700; line-height: 1.6 !important; border-top: 1px solid rgba(255, 255, 255, .08); }
+.pyed-verdict[hidden] { display: none; }
+.pyed-verdict.ok { background: rgba(46, 157, 91, .2); color: #7ee2a8; }
+.pyed-verdict.no { background: rgba(255, 90, 77, .14); color: #ffb4ac; }
+.pyed-verdict .icon { vertical-align: -3px; }
+.pyed-expect { margin: 8px 0 0; padding: 8px 10px; border-radius: 8px; background: rgba(0, 0, 0, .3); color: #e6e9f0; font: 13.5px/1.6 "Cascadia Code", Consolas, monospace; font-weight: 400; white-space: pre-wrap; }
+.pyed-extra { border-top: 1px solid rgba(255, 255, 255, .08); padding: 6px 16px 10px; }
+.pyed-extra p { margin: 6px 0 4px; font-size: 14.5px !important; color: #e6e9f0; line-height: 1.7 !important; }
+.pyed-sol { margin: 6px 0 8px; padding: 10px 12px; border-radius: 8px; background: rgba(0, 0, 0, .3); overflow-x: auto; font: 14.5px/1.6 "Cascadia Code", Consolas, monospace; }
+#lesson .pyed-sol code { background: none; color: #e6e9f0; padding: 0; font: inherit; }
+
+.boxes { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; align-items: flex-end; padding: 22px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.bx { display: grid; justify-items: center; gap: 6px; }
+.bx-name { font: 800 15px/1 "Cascadia Code", Consolas, monospace; color: var(--brand); }
+.bx-val { min-width: 76px; max-width: 220px; padding: 14px 16px; text-align: center; border: 2px solid #111; border-radius: 10px; background: var(--bg); font: 700 20px/1.25 "Cascadia Code", Consolas, monospace; word-break: break-all; }
+.bx-type { font-size: 12.5px; font-weight: 700; color: var(--muted); padding: 1px 9px; border: 1px solid var(--line); border-radius: 99px; }
+.boxes-fig { margin: 0; }
+.boxes-fig figcaption { text-align: center; color: var(--muted); font-size: 14px; font-weight: 600; margin-top: 8px; }
+.flow { list-style: none; margin: 0; padding: 18px 14px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.flow li { margin: 0 !important; }
+.fl { display: grid; justify-items: center; gap: 2px; padding: 10px 16px; border: 2px solid #111; border-radius: 12px; background: var(--bg); font-weight: 800; font-size: 16px; text-align: center; }
+.fl small { font-size: 12.5px; font-weight: 500; color: var(--muted); }
+.fl.ask { border-radius: 99px; background: #111; color: #fff; }
+.fl.ask small { color: #c7c7c7; }
+.fl.end { background: var(--soft); }
+.fl-ar { display: inline-flex; color: var(--muted); }
+.fl-ar .icon { width: 22px; height: 22px; }
+
+/* ---- 화면 한 장에 들어가도록 편집기를 조금 촘촘하게 ---- */
+.pyed-bar { padding: 7px 10px 7px 14px; gap: 8px; }
+.pyed-btn { padding: 5px 10px; font-size: 13px; }
+.pyed-task { padding: 9px 14px; font-size: 14.5px !important; line-height: 1.55 !important; }
+.CodeMirror.cm-s-pyschool { font-size: 14.5px; line-height: 1.55; padding: 6px 0; }
+.pyed-plain { font-size: 14.5px; line-height: 1.55; }
+.pyed-stdin { padding: 4px 14px 8px; }
+.pyed-stdin summary, .pyed-extra summary { padding: 3px 0; font-size: 13px; }
+.pyed-stdin-box { margin-top: 4px; padding: 6px 10px; font-size: 14px; line-height: 1.5; }
+.pyed-out-head { padding: 4px 14px; }
+.pyed-out-text { padding: 2px 14px 10px; min-height: 3.3em; max-height: 190px; font-size: 14px; line-height: 1.55; }
+.pyed-verdict { padding: 8px 14px; font-size: 14px !important; }
+.pyed-extra { padding: 2px 14px 4px; }
+.pyed-extra p { font-size: 14px !important; margin: 4px 0 2px; }
+.pyed-sol { font-size: 13.5px; padding: 8px 10px; }
+
+/* ---- 긴 코드·결과는 편집기 안에서 스크롤 (화면 높이를 넘기지 않게) ---- */
+.CodeMirror.cm-s-pyschool .CodeMirror-scroll { max-height: 250px; }
+.pyed-out-text { max-height: 150px; }
+.pyed-plain { max-height: 250px; }
+.pyed-extra summary { font-size: 13px; }
+.pyed-extra p b { color: #ffd479; }
+.pyed-sol { max-height: 180px; overflow: auto; }
+
+/* 편집기 칸을 한 번 더 낮춰 화면 한 장에 가깝게 (넘치는 코드·결과는 안에서 스크롤) */
+.CodeMirror.cm-s-pyschool .CodeMirror-scroll { max-height: 210px; }
+.pyed-out-text { max-height: 110px; min-height: 2.6em; }

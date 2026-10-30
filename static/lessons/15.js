@@ -1,0 +1,115 @@
+LESSON_CONTENT[15] = {
+  minutes: 35,
+  intro: "이름표(키)로 값을 찾는 딕셔너리와, 중복 없이 모으는 집합을 배워요. 연락처, 성적표, 단어 세기를 직접 만들어 봐요.",
+  goals: ["딕셔너리를 만들고 키로 값을 읽고 바꾼다", "items() 로 키와 값을 함께 반복한다", "집합으로 중복을 없애고, 네 가지 자료형을 고른다"],
+  blocks: [
+    { t: "h", text: "딕셔너리란? 나만의 연락처", sub: "이름(키)을 찾으면 번호(값)가 나와요", icon: "book-open" },
+    { t: "p", text: "리스트는 번호로 찾았죠? **딕셔너리**는 ==이름표(키)로 값을 찾는== 자료형이에요. 휴대폰 연락처처럼 이름을 누르면 번호가 나와요." },
+    { t: "p", text: "중괄호 `{ }` 안에 `키: 값` 을 쉼표로 이어 써요. 키 하나에 값 하나가 짝이에요." },
+    { t: "boxes", items: [
+      { name: "철수", value: "'010-1111'", type: "key → value" },
+      { name: "영희", value: "'010-2222'", type: "key → value" },
+      { name: "민수", value: "'010-3333'", type: "key → value" },
+    ], cap: "연락처: 이름(키)으로 번호(값)를 찾아요" },
+
+    { t: "h", text: "만들고 읽기", sub: "딕셔너리[키] 로 값을 꺼내요", icon: "search" },
+    { t: "p", text: "`딕셔너리[키]` 를 쓰면 짝이 되는 값이 나와요. 리스트의 `[0]` 자리에 번호 대신 키를 넣는 셈이에요." },
+    { t: "anat", parts: [
+      { code: 'contacts', label: "딕셔너리 이름", sub: "연락처" },
+      { code: '["영희"]', label: "키", sub: "찾을 이름", hl: true },
+    ] },
+    { t: "code", file: "dict.py", py: true, text: 'contacts = {"철수": "010-1111", "영희": "010-2222"}\nprint(contacts["영희"])\nprint(contacts)', out: "010-2222\n{'철수': '010-1111', '영희': '010-2222'}" },
+    { t: "tip", text: "없는 키를 읽으면 `KeyError` 가 나요. 철자와 따옴표를 확인해요." },
+
+    { t: "h", text: "추가하고 바꾸기", sub: "같은 문법으로 둘 다 해요", icon: "pencil" },
+    { t: "p", text: "`딕셔너리[키] = 값` 을 쓰면 ==키가 없을 때는 추가, 있을 때는 값을 바꿔요==." },
+    { t: "code", file: "add.py", py: true, text: 'stock = {"사과": 3, "배": 5}\nstock["귤"] = 7\nstock["사과"] = 4\nprint(stock)', out: "{'사과': 4, '배': 5, '귤': 7}" },
+    { t: "editor", title: "미션", task: "`price` 에 `\"차\"` 키와 값 `2500` 을 추가하고 출력해 보세요.",
+      code: 'price = {"커피": 3000}\n# 여기에 쓰세요',
+      expect: "{'커피': 3000, '차': 2500}", solution: 'price = {"커피": 3000}\nprice["차"] = 2500\nprint(price)',
+      hint: '`price["차"] = 2500` 처럼 써요.' },
+
+    { t: "h", text: "get: 없어도 안전하게", sub: "키가 없을 때 기본값을 줄 수 있어요", icon: "wand-sparkles" },
+    { t: "p", text: "`딕셔너리.get(키)` 는 ==키가 없어도 오류 대신== `None`(없음)을 줘요. 두 번째 값을 쓰면 그 값이 기본값이 돼요." },
+    { t: "code", file: "get.py", py: true, text: 'contacts = {"철수": "010-1111"}\nprint(contacts.get("철수"))\nprint(contacts.get("민수"))\nprint(contacts.get("민수", "없음"))', out: "010-1111\nNone\n없음" },
+    { t: "editor", title: "자유 실험", task: "찾는 이름이나 기본값 글자를 바꿔서 결과를 확인해 보세요.",
+      code: 'contacts = {"철수": "010-1111"}\nprint(contacts.get("영희", "등록 안 됨"))' },
+
+    { t: "h", text: "지우기와 in 검사", sub: "del · pop · in", icon: "circle-x" },
+    { t: "p", text: "`del 딕셔너리[키]` 로 짝을 지워요. `pop(키)` 는 지우면서 값을 돌려줘요. `키 in 딕셔너리` 는 ==키가 있는지== 확인해요." },
+    { t: "code", file: "del.py", py: true, text: 'stock = {"사과": 3, "배": 5, "귤": 7}\ndel stock["배"]\nn = stock.pop("귤")\nprint(n, stock)\nprint("사과" in stock)\nprint("배" in stock)', out: "7 {'사과': 3}\nTrue\nFalse" },
+    { t: "editor", title: "미션", task: "`d` 에서 키 `\"b\"` 를 지우고 `d` 를 출력해 보세요.",
+      code: 'd = {"a": 1, "b": 2, "c": 3}\n# 여기에 쓰세요',
+      expect: "{'a': 1, 'c': 3}", solution: 'd = {"a": 1, "b": 2, "c": 3}\ndel d["b"]\nprint(d)',
+      hint: '`del d["b"]` 를 쓰고 `print(d)`.' },
+
+    { t: "h", text: "딕셔너리 반복하기", sub: "items() 로 키와 값을 함께", icon: "workflow" },
+    { t: "p", text: "`for` 에 `.items()` 를 쓰면 ==키와 값을 한 쌍씩== 꺼내요. `.keys()` 는 키만, `.values()` 는 값만이에요." },
+    { t: "code", file: "loop.py", py: true, text: 'scores = {"철수": 80, "영희": 95}\nfor name, score in scores.items():\n    print(name, score)\nprint(list(scores.keys()))\nprint(list(scores.values()))', out: "철수 80\n영희 95\n['철수', '영희']\n[80, 95]" },
+    { t: "editor", title: "미션", task: "`items()` 로 `사과 1000원` 처럼 한 줄씩 출력해 보세요.",
+      code: 'prices = {"사과": 1000, "배": 2000}\n# 여기에 쓰세요',
+      expect: "사과 1000원\n배 2000원", solution: 'prices = {"사과": 1000, "배": 2000}\nfor name, p in prices.items():\n    print(f"{name} {p}원")',
+      hint: "`for name, p in prices.items():` 로 시작해요." },
+
+    { t: "h", text: "딕셔너리를 담은 리스트", sub: "학생 목록처럼 여러 명의 정보를 정리해요", icon: "files" },
+    { t: "p", text: "학생 한 명은 딕셔너리(이름, 점수)로, 학생 여럿은 ==리스트로 묶어요==. 실제 프로그램에서 아주 자주 쓰는 모양이에요." },
+    { t: "table", head: ["번호", "name", "score"], rows: [
+      ["0", "철수", "80"],
+      ["1", "영희", "95"],
+    ] },
+    { t: "code", file: "students.py", py: true, text: 'students = [\n    {"name": "철수", "score": 80},\n    {"name": "영희", "score": 95},\n]\nfor s in students:\n    print(s["name"], s["score"])\nprint(students[1]["name"])', out: "철수 80\n영희 95\n영희" },
+
+    { t: "h", text: "미니 프로젝트: 개수 세기", sub: "get 으로 투표 결과를 세어 봐요", icon: "target" },
+    { t: "p", text: "처음 보는 항목은 0으로 보고 1을 더해요. `get(w, 0) + 1` 한 줄이면 ==개수 세기==가 끝나요." },
+    { t: "code", file: "count.py", py: true, text: 'words = ["apple", "banana", "apple", "cherry", "apple"]\ncount = {}\nfor w in words:\n    count[w] = count.get(w, 0) + 1\nprint(count)', out: "{'apple': 3, 'banana': 1, 'cherry': 1}" },
+    { t: "editor", title: "미션", task: "`votes` 에서 `\"A\"` 와 `\"B\"` 가 각각 몇 표인지 세어 `count` 를 출력해 보세요.",
+      code: 'votes = ["A", "B", "A", "A", "B"]\ncount = {}\n# 여기에 쓰세요',
+      expect: "{'A': 3, 'B': 2}", solution: 'votes = ["A", "B", "A", "A", "B"]\ncount = {}\nfor v in votes:\n    count[v] = count.get(v, 0) + 1\nprint(count)',
+      hint: "위 예제의 `words` 자리를 `votes` 로 바꾸면 돼요." },
+
+    { t: "h", text: "집합: 중복 없는 주머니", sub: "같은 값은 한 번만, 순서는 없어요", icon: "layout-grid" },
+    { t: "p", text: "**집합(set)** 은 ==중복을 허용하지 않는 주머니==예요. 순서와 번호가 없어서 `s[0]` 은 쓸 수 없어요. 리스트를 `set()` 에 넣으면 중복이 사라져요." },
+    { t: "warn", text: "`{}` 만 쓰면 빈 딕셔너리예요. 빈 집합은 `set()` 이라고 써요." },
+    { t: "code", file: "set.py", py: true, text: 'nums = [1, 2, 2, 3, 3, 3]\nu = set(nums)\nprint(u)\nu.add(5)\nu.remove(1)\nprint(sorted(u))\nprint(3 in u)', out: "{1, 2, 3}\n[2, 3, 5]\nTrue" },
+    { t: "editor", title: "자유 실험", task: "리스트에 숫자를 더 넣거나 중복을 늘려 보고 개수가 어떻게 되는지 봐요.",
+      code: 'nums = [4, 4, 7, 7, 7, 9]\nu = set(nums)\nprint(sorted(u))\nprint(len(u))' },
+
+    { t: "h", text: "집합끼리 계산하기", sub: "합집합 | 교집합 & 차집합 -", icon: "puzzle" },
+    { t: "p", text: "두 반의 수학 점수 번호를 비교하듯, 집합끼리 ==합치고 겹치는 것만 고르고 빼는== 계산을 할 수 있어요." },
+    { t: "table", head: ["기호", "이름", "뜻"], rows: [
+      ["`a | b`", "합집합", "둘을 합쳐요"],
+      ["`a & b`", "교집합", "양쪽에 모두 있는 것"],
+      ["`a - b`", "차집합", "a 에만 있는 것"],
+    ] },
+    { t: "code", file: "setop.py", py: true, text: 'a = {1, 2, 3, 4}\nb = {3, 4, 5}\nprint(a | b)\nprint(a & b)\nprint(a - b)', out: "{1, 2, 3, 4, 5}\n{3, 4}\n{1, 2}" },
+
+    { t: "h", text: "리스트? 튜플? 딕셔너리? 집합?", sub: "상황에 맞는 서랍장을 골라요", icon: "route", wide: true },
+    { t: "p", text: "고민될 때는 ==어떻게 찾을 건지==를 먼저 생각해요. 번호로 찾으면 리스트, 이름으로 찾으면 딕셔너리예요." },
+    { t: "table", head: ["", "리스트", "튜플", "딕셔너리", "집합"], rows: [
+      ["모양", "`[1, 2]`", "`(1, 2)`", "`{\"a\": 1}`", "`{1, 2}`"],
+      ["찾는 법", "번호", "번호", "키", "`in` 검사"],
+      ["중복", "허용", "허용", "키는 불가", "불가"],
+      ["바꾸기", "가능", "불가능", "가능", "가능"],
+      ["이럴 때", "순서 있는 목록", "고정된 값", "이름표로 찾기", "중복 제거"],
+    ] },
+
+    { t: "h", text: "확인 퀴즈", sub: "배운 내용을 점검해 봐요", icon: "circle-help", kicker: "QUIZ" },
+    { t: "quiz", q: "`d = {\"a\": 1, \"b\": 2}` 일 때 `d[\"b\"]` 의 값은?", options: ["1", "\"b\"", "2"], answer: 2, explain: "`\"b\"` 키의 짝이 2예요. 딕셔너리는 키로 값을 찾아요." },
+    { t: "quiz", q: "없는 키를 오류 없이 읽고 싶을 때 쓰는 것은?", options: ["d.get(키)", "d.pop()", "del d"], answer: 0, explain: "`get` 은 키가 없으면 `None`(또는 정해 준 기본값)을 줘요." },
+    { t: "quiz", q: "`set([1, 1, 2])` 의 결과로 알맞은 것은?", options: ["{1, 1, 2}", "{1, 2}", "[1, 2]"], answer: 1, explain: "집합은 중복을 허용하지 않아서 `{1, 2}` 가 돼요." },
+    { t: "quiz", q: "`a = {1, 2, 3}`, `b = {2, 3, 4}` 일 때 `a & b` 는?", options: ["{1, 2, 3, 4}", "{1}", "{2, 3}"], answer: 2, explain: "`&` 는 교집합이에요. 양쪽에 모두 있는 2, 3만 남아요." },
+
+    { t: "h", text: "오늘의 핵심 정리", sub: "이것만 기억해도 성공!", icon: "list-checks", kicker: "SUMMARY" },
+    { t: "list", items: [
+      "딕셔너리 `{키: 값}` = 이름표로 값을 찾는 연락처",
+      "`d[키] = 값` 으로 추가·수정, `get` 으로 안전하게 읽기",
+      "`del` / `pop` 으로 삭제, `in` 은 키 검사",
+      "`for k, v in d.items():` 로 키와 값 함께 반복",
+      "집합 `set` = 중복 없는 주머니, `|` `&` `-` 로 계산",
+    ] },
+    { t: "refs", items: [
+      { title: "파이썬 튜토리얼: 자료 구조", url: "https://docs.python.org/ko/3/tutorial/datastructures.html", desc: "딕셔너리와 집합을 공식 문서로 더 자세히" },
+      { title: "Python Tutor", url: "https://pythontutor.com/", desc: "자료가 만들어지는 모습을 눈으로 볼 수 있어요" },
+    ] },
+  ],
+};

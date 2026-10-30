@@ -1,0 +1,118 @@
+LESSON_CONTENT[17] = {
+  minutes: 35,
+  intro: "프로그램이 끝나도 데이터가 남게 하려면 파일에 저장해야 해요. 파일에 쓰고 다시 읽는 방법을 배워요.",
+  goals: ["`open()` 과 `with` 로 파일을 열고 닫는다", "`write()` 로 쓰고 `read()` 등으로 읽는다", "`\"w\"` 와 `\"a\"` 의 차이를 구분한다"],
+  blocks: [
+    { t: "h", text: "프로그램은 금방 잊어버려요", sub: "끝나면 변수의 값이 모두 사라져요", icon: "save" },
+    { t: "p", text: "변수에 담은 점수는 프로그램이 끝나면 **사라져요**. 메모리는 칠판처럼 지워지는 곳이거든요." },
+    { t: "p", text: "그래서 남기고 싶은 데이터는 ==파일(공책)에 적어 두고==, 다음에 다시 열어 읽어요." },
+    { t: "flow", items: ["프로그램 실행", "점수를 변수에 저장", "프로그램 종료", { t: "변수 값이 사라져요", k: "end" }] },
+
+    { t: "h", text: "이 사이트에서 파일은 어디에?", sub: "편집기 안의 가상 폴더에 만들어져요", icon: "folder-tree" },
+    { t: "warn", text: "이 사이트의 편집기에서는 파일이 **브라우저 안의 가상 폴더**에 만들어져요. 내 컴퓨터에는 생기지 않고, ==페이지를 새로고침하면 사라져요.==" },
+    { t: "p", text: "내 컴퓨터에서 `python hello.py` 로 실행하면 같은 코드가 **진짜 파일**을 `hello.py` 옆에 만들어요." },
+    { t: "tree", items: [
+      { depth: 0, name: "python-study", note: "내 컴퓨터의 폴더" },
+      { depth: 1, name: "hello.py", type: "file" },
+      { depth: 1, name: "memo.txt", type: "file", hl: true, note: "코드가 만든 파일" },
+    ] },
+
+    { t: "h", text: "파일에 쓰기", sub: "open 으로 열고 write 로 적고 close 로 닫아요", icon: "pen-line" },
+    { t: "p", text: "`\"w\"` 는 **쓰기(write)** 모드예요. 파일이 없으면 새로 만들어요. 한글을 쓸 땐 `encoding=\"utf-8\"` 을 꼭 붙여요." },
+    { t: "anat", parts: [
+      { code: "open", label: "파일 열기", sub: "함수 이름" },
+      { code: '"memo.txt"', label: "파일 이름", sub: "만들거나 열 파일", hl: true },
+      { code: '"w"', label: "모드", sub: "쓰기" },
+      { code: 'encoding="utf-8"', label: "글자 규칙", sub: "한글이 깨지지 않게" },
+    ] },
+    { t: "code", file: "write.py", py: true, text: 'f = open("memo.txt", "w", encoding="utf-8")\nf.write("안녕하세요\\n")\nf.write("파일 쓰기\\n")\nf.close()\nprint("저장 완료")', out: "저장 완료" },
+    { t: "editor", title: "실험해 보기", task: "글자를 바꿔 `write` 를 실행해 보세요. 파일 이름도 바꿀 수 있어요.",
+      code: 'f = open("memo.txt", "w", encoding="utf-8")\nf.write("나의 첫 메모\\n")\nf.close()\nprint("저장 완료")' },
+
+    { t: "h", text: "with 로 안전하게", sub: "블록이 끝나면 파일이 저절로 닫혀요", icon: "folder-open" },
+    { t: "p", text: "`close()` 를 깜빡하면 내용이 제대로 저장되지 않을 수 있어요. `with` 를 쓰면 ==들여쓴 블록이 끝날 때 자동으로 닫혀요.== 앞으로는 늘 `with` 를 써요." },
+    { t: "flow", items: ["with 로 파일 열기", "들여쓴 코드 실행", "블록이 끝나요", { t: "파일 자동으로 닫힘", k: "end" }] },
+    { t: "code", file: "with.py", py: true, text: 'with open("memo.txt", "w", encoding="utf-8") as f:\n    f.write("첫 줄\\n")\n    f.write("둘째 줄\\n")\nprint(f.closed)', out: "True" },
+
+    { t: "h", text: "파일 읽기: read()", sub: "\"r\" 모드로 전체를 한 번에 읽어요", icon: "book-open" },
+    { t: "p", text: "`\"r\"` 는 **읽기(read)** 모드예요. `read()` 는 파일 전체를 **문자열 하나**로 돌려줘요. 줄바꿈 `\\n` 도 글자로 함께 들어 있어요." },
+    { t: "code", file: "read.py", py: true, text: 'with open("memo.txt", "w", encoding="utf-8") as f:\n    f.write("사과\\n바나나\\n")\n\nwith open("memo.txt", "r", encoding="utf-8") as f:\n    text = f.read()\nprint(text)', out: "사과\n바나나" },
+    { t: "editor", title: "미션", task: "`study.txt` 를 `\"r\"` 모드로 열어 `read()` 로 읽고 **출력**하세요.",
+      code: 'with open("study.txt", "w", encoding="utf-8") as f:\n    f.write("파이썬\\n공부\\n")\n\n# 여기서 study.txt 를 읽어 출력하세요\n',
+      expect: "파이썬\n공부", solution: 'with open("study.txt", "w", encoding="utf-8") as f:\n    f.write("파이썬\\n공부\\n")\n\nwith open("study.txt", "r", encoding="utf-8") as f:\n    text = f.read()\nprint(text)',
+      hint: "`with open(\"study.txt\", \"r\", encoding=\"utf-8\") as f:` 안에서 `f.read()`." },
+
+    { t: "h", text: "한 줄씩 읽기", sub: "readline, for 문, readlines", icon: "list-todo" },
+    { t: "p", text: "파일이 크면 한 번에 읽기 부담스러워요. 줄 단위로 읽는 방법이 여러 가지 있어요. 보통은 ==`for line in f`== 가 가장 간단해요." },
+    { t: "table", head: ["방법", "돌려주는 것"], rows: [
+      ["`f.read()`", "전체를 문자열 하나로"],
+      ["`f.readline()`", "한 줄씩 (부를 때마다 다음 줄)"],
+      ["`for line in f:`", "줄을 하나씩 꺼내며 반복"],
+      ["`f.readlines()`", "모든 줄을 담은 리스트"],
+    ] },
+    { t: "code", file: "lines.py", py: true, text: 'with open("fruit.txt", "w", encoding="utf-8") as f:\n    f.write("사과\\n바나나\\n포도\\n")\n\nwith open("fruit.txt", "r", encoding="utf-8") as f:\n    first = f.readline()\n    print(first, end="")\n    for line in f:\n        print(line, end="")', out: "사과\n바나나\n포도" },
+
+    { t: "h", text: "줄바꿈 \\n 떼어 내기", sub: "읽은 줄 끝에는 \\n 이 붙어 있어요", icon: "wand-sparkles" },
+    { t: "p", text: "읽은 줄 끝에는 `\\n` 이 붙어 있어서, 그냥 `print` 하면 **빈 줄이 하나 더** 생겨요. `.strip()` 은 앞뒤 공백과 줄바꿈을, `.rstrip(\"\\n\")` 은 끝의 줄바꿈만 없애요." },
+    { t: "code", file: "strip.py", py: true, text: 'with open("fruit.txt", "w", encoding="utf-8") as f:\n    f.write("사과\\n바나나\\n포도\\n")\nwith open("fruit.txt", "r", encoding="utf-8") as f:\n    lines = f.readlines()\nprint(lines)\nfor line in lines:\n    print(line.rstrip("\\n"))', out: "['사과\\n', '바나나\\n', '포도\\n']\n사과\n바나나\n포도" },
+    { t: "editor", title: "미션", task: "`names.txt` 의 이름을 한 줄씩 읽어 `안녕, 철수!` 처럼 출력하세요. 줄바꿈은 `.strip()` 으로 떼요.",
+      code: 'with open("names.txt", "w", encoding="utf-8") as f:\n    f.write("철수\\n영희\\n")\n\n# 여기서 names.txt 를 읽어 인사하세요\n',
+      expect: "안녕, 철수!\n안녕, 영희!", solution: 'with open("names.txt", "w", encoding="utf-8") as f:\n    f.write("철수\\n영희\\n")\n\nwith open("names.txt", "r", encoding="utf-8") as f:\n    for line in f:\n        print(f"안녕, {line.strip()}!")',
+      hint: "`for line in f:` 안에서 `line.strip()` 을 f-string 에 넣어요." },
+
+    { t: "h", text: "이어쓰기: \"a\" 모드", sub: "있던 내용 뒤에 덧붙여요", icon: "folder-plus" },
+    { t: "p", text: "`\"w\"` 는 열 때마다 ==기존 내용을 지우고 새로 써요.== 내용을 남긴 채 뒤에 덧붙이려면 **\"a\"**(append) 모드를 써요." },
+    { t: "code", file: "append.py", py: true, text: 'with open("log.txt", "w", encoding="utf-8") as f:\n    f.write("1회차\\n")\nwith open("log.txt", "a", encoding="utf-8") as f:\n    f.write("2회차\\n")\nwith open("log.txt", "r", encoding="utf-8") as f:\n    print(f.read(), end="")', out: "1회차\n2회차" },
+    { t: "editor", title: "실험해 보기", task: "`\"a\"` 를 `\"w\"` 로 바꿔 실행하면 결과가 어떻게 달라질까요?",
+      code: 'with open("log.txt", "w", encoding="utf-8") as f:\n    f.write("1회차\\n")\nwith open("log.txt", "a", encoding="utf-8") as f:\n    f.write("2회차\\n")\nwith open("log.txt", "r", encoding="utf-8") as f:\n    print(f.read())' },
+
+    { t: "h", text: "파일 모드 한눈에 보기", sub: "r, w, a 세 가지면 충분해요", icon: "layout-grid", wide: true },
+    { t: "warn", text: "`\"w\"` 로 이미 있는 파일을 열면 ==내용이 모두 지워져요.== 지우고 싶지 않으면 `\"a\"` 를 써요." },
+    { t: "table", head: ["모드", "뜻", "파일이 없으면", "파일이 있으면"], rows: [
+      ["`\"r\"`", "읽기", "오류가 나요", "처음부터 읽어요"],
+      ["`\"w\"`", "쓰기", "새로 만들어요", "내용을 지우고 새로 써요"],
+      ["`\"a\"`", "이어쓰기", "새로 만들어요", "끝에 덧붙여요"],
+    ] },
+
+    { t: "h", text: "파일에서 읽은 숫자", sub: "파일 속 숫자도 처음엔 문자열이에요", icon: "hash" },
+    { t: "p", text: "파일에서 읽은 값은 숫자처럼 보여도 **문자열**이에요. 계산하려면 `int()` 로 바꿔야 해요. `int(\"80\\n\")` 처럼 줄바꿈이 붙어 있어도 변환돼요." },
+    { t: "code", file: "score.py", py: true, text: 'with open("score.txt", "w", encoding="utf-8") as f:\n    f.write("80\\n90\\n75\\n")\n\ntotal = 0\nwith open("score.txt", "r", encoding="utf-8") as f:\n    for line in f:\n        total += int(line)\nprint(f"합계: {total}")', out: "합계: 245" },
+    { t: "editor", title: "미션", task: "`nums.txt` 의 숫자 중 **가장 큰 값**을 `int()` 로 바꿔 비교해서 출력하세요.",
+      code: 'with open("nums.txt", "w", encoding="utf-8") as f:\n    f.write("12\\n40\\n7\\n")\n\nbest = 0\n# 여기서 nums.txt 를 읽어 가장 큰 값을 찾으세요\nprint(best)',
+      expect: "40", solution: 'with open("nums.txt", "w", encoding="utf-8") as f:\n    f.write("12\\n40\\n7\\n")\n\nbest = 0\nwith open("nums.txt", "r", encoding="utf-8") as f:\n    for line in f:\n        n = int(line)\n        if n > best:\n            best = n\nprint(best)',
+      hint: "`n = int(line)` 로 바꾼 뒤 `n > best` 이면 `best = n`." },
+
+    { t: "h", text: "미니 프로젝트 1: 점수 기록", sub: "저장하고 다시 읽어 평균 내기", icon: "chart-column" },
+    { t: "p", text: "점수를 파일에 한 줄씩 **저장**하고, 같은 프로그램에서 **다시 읽어** 합계와 평균을 구해요. `write` 는 문자열만 받으니 `str()` 로 바꿔요." },
+    { t: "code", file: "record.py", py: true, text: 'scores = [85, 92, 78]\nwith open("scores.txt", "w", encoding="utf-8") as f:\n    for s in scores:\n        f.write(str(s) + "\\n")\ntotal = 0\nwith open("scores.txt", "r", encoding="utf-8") as f:\n    for line in f:\n        total += int(line)\nprint("합계:", total)\nprint("평균:", total / len(scores))', out: "합계: 255\n평균: 85.0" },
+    { t: "editor", title: "실험해 보기", task: "`scores` 의 점수를 바꾸거나 하나 더 넣어 합계와 평균이 어떻게 달라지는지 보세요.",
+      code: 'scores = [85, 92, 78]\nwith open("scores.txt", "w", encoding="utf-8") as f:\n    for s in scores:\n        f.write(str(s) + "\\n")\ntotal = 0\nwith open("scores.txt", "r", encoding="utf-8") as f:\n    for line in f:\n        total += int(line)\nprint("합계:", total)\nprint("평균:", total / len(scores))' },
+
+    { t: "h", text: "미니 프로젝트 2: 방명록", sub: "이름을 저장하고 번호를 붙여 읽기", icon: "book-open" },
+    { t: "p", text: "손님 이름을 파일에 적고, 다시 읽어 번호를 붙여 보여 줘요. 번호는 `n += 1` 로 하나씩 늘려요." },
+    { t: "flow", items: ["이름 리스트 준비", "파일에 한 줄씩 쓰기", "파일 닫기", "다시 열어 읽기", { t: "번호 붙여 출력", k: "end" }] },
+    { t: "editor", title: "미션", task: "`guest.txt` 를 읽어 `1번: 철수` 처럼 번호와 함께 출력하세요.",
+      code: 'guests = ["철수", "영희", "민수"]\nwith open("guest.txt", "w", encoding="utf-8") as f:\n    for g in guests:\n        f.write(g + "\\n")\n\n# 여기서 guest.txt 를 읽어 출력하세요\n',
+      expect: "1번: 철수\n2번: 영희\n3번: 민수", solution: 'guests = ["철수", "영희", "민수"]\nwith open("guest.txt", "w", encoding="utf-8") as f:\n    for g in guests:\n        f.write(g + "\\n")\n\nn = 0\nwith open("guest.txt", "r", encoding="utf-8") as f:\n    for line in f:\n        n += 1\n        print(f"{n}번: {line.strip()}")',
+      hint: "`n = 0` 으로 시작해 줄마다 `n += 1` 을 하고 f-string 으로 출력해요." },
+
+    { t: "h", text: "확인 퀴즈", sub: "배운 내용을 점검해 봐요", icon: "circle-help", kicker: "QUIZ" },
+    { t: "quiz", q: "기존 내용을 지우지 않고 뒤에 덧붙이는 모드는?", options: ["\"w\"", "\"r\"", "\"a\""], answer: 2, explain: "`\"a\"`(append)는 파일 끝에 덧붙여요. `\"w\"` 는 기존 내용을 지워요." },
+    { t: "quiz", q: "`with open(...) as f:` 를 쓰는 가장 큰 이유는?", options: ["블록이 끝나면 파일이 자동으로 닫혀서", "파일이 더 크게 저장돼서", "한글이 자동으로 번역돼서"], answer: 0, explain: "`with` 블록이 끝나면 파일이 자동으로 닫혀서 `close()` 를 깜빡할 일이 없어요." },
+    { t: "quiz", q: "파일에서 읽은 `\"80\\n\"` 로 계산하려면?", options: ["그대로 더한다", "`int()` 로 바꾼다", "`write()` 를 쓴다"], answer: 1, explain: "파일에서 읽은 값은 문자열이라 `int()` 로 바꿔야 숫자로 계산할 수 있어요." },
+    { t: "quiz", q: "이 사이트 편집기가 만든 파일은 어디에 있을까요?", options: ["바탕화면에 저장된다", "브라우저 안 가상 폴더에 있고 새로고침하면 사라진다", "인터넷 서버에 영구 저장된다"], answer: 1, explain: "편집기의 파일은 브라우저 안의 가상 폴더에만 있어요. 내 컴퓨터에서 실행하면 진짜 파일이 생겨요." },
+
+    { t: "h", text: "오늘의 핵심 정리", sub: "이것만 기억해도 성공!", icon: "list-checks", kicker: "SUMMARY" },
+    { t: "list", items: [
+      "`with open(이름, 모드, encoding=\"utf-8\") as f:` 로 열어요",
+      "`\"r\"` 읽기, `\"w\"` 쓰기(지우고 새로), `\"a\"` 이어쓰기",
+      "읽기: `read()` · `readline()` · `for line in f` · `readlines()`",
+      "줄 끝 `\\n` 은 `.strip()` 으로, 숫자는 `int()` 로 바꿔요",
+    ] },
+    { t: "refs", items: [
+      { title: "파이썬 튜토리얼: 파일을 읽고 쓰기", url: "https://docs.python.org/ko/3/tutorial/inputoutput.html", desc: "공식 문서의 파일 입출력 설명이에요" },
+      { title: "내장 함수 목록 (공식 문서)", url: "https://docs.python.org/ko/3/library/functions.html", desc: "open() 의 모드와 옵션을 볼 수 있어요" },
+      { title: "UTF-8 (위키백과)", url: "https://ko.wikipedia.org/wiki/UTF-8", desc: "encoding=\"utf-8\" 이 무엇인지 알아봐요" },
+    ] },
+  ],
+};

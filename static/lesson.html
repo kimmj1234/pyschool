@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>학습 - 파이스쿨</title>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/editor.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="logo" href="/"><img class="logo-img" src="/logo.svg" alt=""><span class="logo-text">파이스쿨</span></a>
+      <nav class="links">
+        <a href="/basics.html">컴퓨터 기초</a>
+        <a href="/python.html">파이썬</a>
+        <a href="/community.html">커뮤니티</a>
+      </nav>
+      <div class="auth" id="auth-area"></div>
+    </div>
+  </header>
+
+  <main>
+    <article id="lesson"></article>
+  </main>
+
+  <dialog id="auth-dialog">
+    <form method="dialog" id="auth-form" autocomplete="off">
+      <h3 id="auth-title">로그인</h3>
+      <label>닉네임<input name="nickname" required minlength="2" maxlength="12" placeholder="2~12자"></label>
+      <label>비밀번호<input name="password" type="password" required placeholder="비밀번호"></label>
+      <div class="pw-rules-wrap"><div class="pw-rules-clip">
+        <ul class="pw-rules" id="pw-rules">
+          <li data-r="len">8자 이상</li>
+          <li data-r="upper">대문자 1개 이상</li>
+          <li data-r="special">특수문자 1개 이상 (! @ # $ 등)</li>
+        </ul>
+      </div></div>
+      <p class="form-err" id="auth-err"></p>
+      <div class="auth-note-wrap"><div class="auth-note-clip">
+        <ol class="auth-note">
+          <li>파이스쿨은 개인정보를 수집하지 않습니다.</li>
+          <li>비밀번호는 다른 프로그램에서 사용하는 비밀번호와 다르게 설정해 주세요.</li>
+          <li>회원가입의 목적은 커뮤니티를 이용하기 위함입니다.</li>
+        </ol>
+      </div></div>
+      <button class="btn primary block" id="auth-submit">로그인</button>
+      <p class="switch"><span id="auth-switch-text">아직 계정이 없나요?</span> <a href="#" id="auth-switch">회원가입</a></p>
+      <button type="button" class="x" data-close aria-label="닫기">✕</button>
+    </form>
+  </dialog>
+
+  <script src="/icons.js"></script>
+  <script src="/smoothgo.js"></script>
+  <script src="/lessons.js"></script>
+  <script src="/lessons/meta.js"></script>
+  <script src="/app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+  <script src="/pyrunner.js"></script>
+  <script src="/editor.js"></script>
+  <script src="/lesson.js"></script>
+  <script src="/wheelpage.js"></script>
+</body>
+</html>
