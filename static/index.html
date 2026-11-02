@@ -81,7 +81,8 @@
     <form method="dialog" id="auth-form" autocomplete="off">
       <h3 id="auth-title">로그인</h3>
       <label>닉네임<input name="nickname" required minlength="2" maxlength="12" placeholder="2~12자"></label>
-      <label>비밀번호<input name="password" type="password" required placeholder="비밀번호"></label>
+      <label>비밀번호<span class="pw-field"><input name="password" type="password" required placeholder="비밀번호"><button type="button" class="pw-eye" data-eye="password" aria-label="비밀번호 보기" aria-pressed="false">보기</button></span></label>
+      <label class="pw2-label">비밀번호 확인<span class="pw-field"><input name="password2" type="password" placeholder="비밀번호를 한 번 더 입력" autocomplete="new-password"><button type="button" class="pw-eye" data-eye="password2" aria-label="비밀번호 확인 보기" aria-pressed="false">보기</button></span></label>
       <div class="pw-rules-wrap"><div class="pw-rules-clip">
         <ul class="pw-rules" id="pw-rules">
           <li data-r="len">8자 이상</li>

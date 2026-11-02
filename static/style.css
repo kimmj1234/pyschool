@@ -530,3 +530,12 @@ dialog.lightbox { width: auto; }   /* 일반 팝업의 좁은 폭(420px)이 크�
 /* 줄이 많은 표는 칸 여백·글자를 줄여서 한 화면에 */
 .col-vis .tbl.dense td, .col-text .tbl.dense td { padding: 7px 14px; font-size: 16px; }
 .col-vis .tbl.dense th, .col-text .tbl.dense th { padding: 7px 14px; }
+
+/* 비밀번호 보기 버튼 + 비밀번호 확인 칸(회원가입에서만) */
+.pw-field { position: relative; display: block; }
+.pw-field input { padding-right: 62px; }
+.pw-eye { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font: inherit; font-size: 12.5px; font-weight: 700; color: #555; background: #f4f4f4; border: 0; border-radius: 6px; padding: 5px 9px; cursor: pointer; }
+.pw-eye:hover { background: #e8e8e8; color: #111; }
+.pw-eye:focus-visible { outline: 2px solid #111; outline-offset: 1px; }
+.pw2-label { display: none; }
+#auth-form.is-signup .pw2-label { display: grid; }

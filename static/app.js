@@ -128,6 +128,16 @@ function updatePwRules() {
 }
 $("#auth-form").password.addEventListener("input", updatePwRules);
 
+/* 비밀번호 보기/가리기 버튼 */
+function setEye(btn, show) {
+  const input = $("#auth-form")[btn.dataset.eye];
+  input.type = show ? "text" : "password";
+  btn.textContent = show ? "숨기기" : "보기";
+  btn.setAttribute("aria-pressed", String(show));
+  btn.setAttribute("aria-label", (btn.dataset.eye === "password2" ? "비밀번호 확인 " : "비밀번호 ") + (show ? "숨기기" : "보기"));
+}
+document.querySelectorAll(".pw-eye").forEach((b) => b.addEventListener("click", () => { setEye(b, b.getAttribute("aria-pressed") !== "true"); $("#auth-form")[b.dataset.eye].focus(); }));
+
 let authSwapTimer = 0;
 function paintAuth(mode) {
   const signup = mode === "signup";
@@ -139,6 +149,9 @@ function paintAuth(mode) {
   pw.autocomplete = signup ? "new-password" : "current-password";
   pw.placeholder = signup ? "8자 이상, 대문자·특수문자 포함" : "비밀번호";
   if (signup) pw.minLength = 8; else pw.removeAttribute("minlength"); // 로그인은 예전 비밀번호도 받아야 하므로 조건 없음
+  const pw2 = $("#auth-form").password2;
+  pw2.required = signup; pw2.value = "";
+  document.querySelectorAll(".pw-eye").forEach((b) => setEye(b, false)); // 모드를 바꾸면 다시 가려 둠
   updatePwRules();
   $("#auth-err").classList.remove("info");
   $("#auth-err").textContent = "";
@@ -170,6 +183,7 @@ $("#auth-form").addEventListener("submit", async (e) => {
   if (authMode === "signup") {
     const msg = pwMessage(pwChecks(f.password.value));
     if (msg) { $("#auth-err").textContent = msg; return; }
+    if (f.password.value !== f.password2.value) { $("#auth-err").textContent = "비밀번호가 서로 달라요. 같은 비밀번호를 한 번 더 입력해 주세요."; f.password2.focus(); return; }
   }
   try {
     const data = await api(authMode === "signup" ? "/api/signup" : "/api/login", "POST",
@@ -177,6 +191,7 @@ $("#auth-form").addEventListener("submit", async (e) => {
     me = data.user;
     const next = pendingNext; pendingNext = null; // 창이 닫히면서 값이 지워지기 전에 챙겨 둠
     f.reset();
+    document.querySelectorAll(".pw-eye").forEach((b) => setEye(b, false));
     $("#auth-dialog").close();
     renderAuth();
     loadPosts();
