@@ -17,11 +17,10 @@
     <div class="wrap nav-in">
       <a class="logo" href="/"><img class="logo-img" src="/logo.svg" alt=""><span class="logo-text">파이스쿨</span></a>
       <nav class="links">
-        <a href="/basics.html" data-auth="컴퓨터 기초">컴퓨터 기초</a>
-        <a href="/python.html" data-auth="파이썬">파이썬</a>
-        <a href="/community.html" data-auth="커뮤니티">커뮤니티</a>
+        <a href="/basics.html">컴퓨터 기초</a>
+        <a href="/python.html">파이썬</a>
+        <a href="/community.html">커뮤니티</a>
       </nav>
-      <div class="auth" id="auth-area"></div>
     </div>
   </header>
 
@@ -34,9 +33,9 @@
           <p class="box-sub" aria-label="With Python"><span class="tw" aria-hidden="true"><span class="tw-ghost">With Python</span><span class="tw-live"><span class="tw-text"></span><i class="tw-caret"></i></span></span></p>
         </div>
         <div class="mini-row">
-          <a class="mini-box" href="/basics.html" data-auth="컴퓨터 기초"><svg class="icon mini-arrow" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-arrow-right"/></svg><span class="mini-title">컴퓨터 기초</span><span class="mini-desc">파일·폴더·터미널부터 개발 도구까지, 코딩 전에 꼭 필요한 기본기</span></a>
-          <a class="mini-box" href="/python.html" data-auth="파이썬"><svg class="icon mini-arrow" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-arrow-right"/></svg><span class="mini-title">파이썬</span><span class="mini-desc">설치부터 첫 프로그램까지, 화면에서 바로 코딩하며 배우는 파이썬</span></a>
-          <a class="mini-box" href="/community.html" data-auth="커뮤니티"><svg class="icon mini-arrow" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-arrow-right"/></svg><span class="mini-title">커뮤니티</span><span class="mini-desc">질문하고 이야기 나누고, 나에게 맞는 강사를 찾아보세요</span></a>
+          <a class="mini-box" href="/basics.html"><svg class="icon mini-arrow" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-arrow-right"/></svg><span class="mini-title">컴퓨터 기초</span><span class="mini-desc">파일·폴더·터미널부터 개발 도구까지, 코딩 전에 꼭 필요한 기본기</span></a>
+          <a class="mini-box" href="/python.html"><svg class="icon mini-arrow" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-arrow-right"/></svg><span class="mini-title">파이썬</span><span class="mini-desc">설치부터 첫 프로그램까지, 화면에서 바로 코딩하며 배우는 파이썬</span></a>
+          <a class="mini-box" href="/community.html"><svg class="icon mini-arrow" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-arrow-right"/></svg><span class="mini-title">커뮤니티</span><span class="mini-desc">질문하고 이야기 나누고, 나에게 맞는 강사를 찾아보세요</span></a>
         </div>
       </div>
     
@@ -76,33 +75,6 @@
       </div>
     </section>
   </main>
-
-  <dialog id="auth-dialog">
-    <form method="dialog" id="auth-form" autocomplete="off">
-      <h3 id="auth-title">로그인</h3>
-      <label>닉네임<input name="nickname" required minlength="2" maxlength="12" placeholder="2~12자"></label>
-      <label>비밀번호<span class="pw-field"><input name="password" type="password" required placeholder="비밀번호"><button type="button" class="pw-eye" data-eye="password" aria-label="비밀번호 보기" aria-pressed="false"><svg class="eye-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></svg><svg class="eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c4.5 0 8.3 2.9 9.94 7a10.8 10.8 0 0 1-1.67 2.68"/><path d="M6.61 6.61A10.7 10.7 0 0 0 2.06 12c1.64 4.1 5.44 7 9.94 7a10.4 10.4 0 0 0 5.39-1.61"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="m2 2 20 20"/></svg></button></span></label>
-      <label class="pw2-label">비밀번호 확인<span class="pw-field"><input name="password2" type="password" placeholder="비밀번호를 한 번 더 입력" autocomplete="new-password"><button type="button" class="pw-eye" data-eye="password2" aria-label="비밀번호 확인 보기" aria-pressed="false"><svg class="eye-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></svg><svg class="eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c4.5 0 8.3 2.9 9.94 7a10.8 10.8 0 0 1-1.67 2.68"/><path d="M6.61 6.61A10.7 10.7 0 0 0 2.06 12c1.64 4.1 5.44 7 9.94 7a10.4 10.4 0 0 0 5.39-1.61"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="m2 2 20 20"/></svg></button></span></label>
-      <div class="pw-rules-wrap"><div class="pw-rules-clip">
-        <ul class="pw-rules" id="pw-rules">
-          <li data-r="len">8자 이상</li>
-          <li data-r="upper">대문자 1개 이상</li>
-          <li data-r="special">특수문자 1개 이상 (! @ # $ 등)</li>
-        </ul>
-      </div></div>
-      <p class="form-err" id="auth-err"></p>
-      <div class="auth-note-wrap"><div class="auth-note-clip">
-        <ol class="auth-note">
-          <li>파이스쿨은 개인정보를 수집하지 않습니다.</li>
-          <li>비밀번호는 다른 프로그램에서 사용하는 비밀번호와 다르게 설정해 주세요.</li>
-          <li>회원가입의 목적은 커뮤니티를 이용하기 위함입니다.</li>
-        </ol>
-      </div></div>
-      <button class="btn primary block" id="auth-submit">로그인</button>
-      <p class="switch"><span id="auth-switch-text">아직 계정이 없나요?</span> <a href="#" id="auth-switch">회원가입</a></p>
-      <button type="button" class="x" data-close aria-label="닫기">✕</button>
-    </form>
-  </dialog>
 
   <script src="/icons.js"></script>
   <script src="/smoothgo.js"></script>

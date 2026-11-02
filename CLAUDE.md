@@ -9,7 +9,7 @@
 ## 프로젝트 개요
 - 파이썬 학습 사이트 "파이스쿨". 의존성 없는 Python 서버(`server.py`, SQLite `data.db`) + 정적 HTML/JS/CSS(`static/`).
 - 컴퓨터 기초(과정 1~6), 파이썬(과정 7~18). 파이썬 과정은 화면에서 직접 코딩(Pyodide를 Web Worker로 실행, CodeMirror 편집기).
-- 로그인 필요 페이지: basics / python / lesson / community. 가입은 닉네임+비밀번호(8자 이상, 대문자 1+, 특수문자 1+).
+- 로그인/회원가입 시스템은 제거됨(2026-11). 모든 페이지 공개. 학습 완료 기록은 브라우저 localStorage, 커뮤니티 글은 이름(선택, 비우면 익명)으로 작성하며 도배 방지로 접속지당 20초 1회.
 - 배포: GitHub `kimmj1234/pyschool` → Render(`render.yaml`, 무료 플랜). 무료 플랜은 DB가 초기화될 수 있음.
 
 ## 디자인 규칙 (사용자가 정해 둔 것)
@@ -18,12 +18,11 @@
 - 한국어로 소통. 메인 문구 "개발의 기초부터 시작하다. / With Python".
 
 ## 지켜야 할 것
-- `data.db`(회원 정보)는 git에 올리지 않는다(.gitignore). 다른 PC의 DB는 별개다.
-- 관리자 계정은 `python create_admin.py` 로 만들고(비밀번호는 실행 시 입력), 비밀번호를 파일·채팅에 적지 않는다.
-- 테스트 계정을 지울 때는 그 계정만 지운다. DB 전체를 지우지 않는다.
+- `data.db`(커뮤니티 글 등)는 git에 올리지 않는다(.gitignore). 다른 PC의 DB는 별개다. DB 전체를 지우지 않는다.
+- 예전 users/sessions/progress 표와 create_admin.py, db_view.py 는 남아 있지만 더 이상 쓰이지 않는다.
 - 과정 내용은 `static/lessons.js`(1,2,7)와 `static/lessons/NN.js`. 형식은 `tools/lesson-spec.md`, 검사는 `node tools/check_lessons.mjs`, 목록 메타는 `node tools/make_meta.mjs`.
 
 ## 남은 일
 - 일부 화면(약 15개)이 900px 높이에서 최대 ~120px 넘침: 과정 5(8번 화면), 7(6번), 8(7번), 9(12번), 10(6·7번), 12(7번), 15(9번), 16(5번), 17(6·7·11번), 18(8·9·10번).
 - 모든 편집기 정답 코드를 실제 브라우저(Pyodide)에서 돌려 보는 검증, 메인 화면 언덕 18개 모양, 모바일 편집기, 과정 3~6 사실 확인.
-- 배포 서버에는 admin 계정이 없음(필요하면 방법 논의).
+- 배포 주소: https://pyschool-9ouw.onrender.com (자동 배포). 무료 플랜은 재시작 시 커뮤니티 글이 지워질 수 있음.

@@ -45,12 +45,8 @@ function lessonInfo(n) {
 }
 const lessonOpen = (n) => !!lessonInfo(n);
 
-let me = null;
-let pendingNext = null; // 로그인에 성공하면 이동할 곳 (로그인이 필요한 링크를 눌렀을 때)
-const NEXT_OK = /^\/(basics\.html|python\.html|community\.html|lesson\.html\?n=\d{1,2})$/; // 이동 허용 주소 (엉뚱한 주소로 보내지 못하게)
 let category = "";
 let categories = {};
-let authMode = "login";
 
 async function api(path, method = "GET", body) {
   const res = await fetch(path, {
@@ -83,128 +79,10 @@ function renderRoadmap() {
   });
 }
 
-/* ---------- progress: 완료 기록은 localStorage 와 (로그인 시) 서버에 함께 저장 ---------- */
+/* ---------- progress: 완료 기록은 이 기기(localStorage)에만 저장 ---------- */
 const localDone = () => { try { return JSON.parse(localStorage.getItem("done") || "[]"); } catch { return []; } };
 const saveLocalDone = (v) => { try { localStorage.setItem("done", JSON.stringify(v)); } catch {} };
-
-// 서버 기록과 합침: 로그인/가입 직후에 이 기기의 기록을 올리고, 서버 쪽 기록을 받아 둠
-async function syncProgress() {
-  if (!me) return;
-  try {
-    const d = await api("/api/progress", "POST", { add: localDone() });
-    saveLocalDone(d.me);
-  } catch {}
-  dispatchEvent(new Event("progress"));
-}
-// 완료/취소 한 번을 서버에 반영 (비로그인이면 localStorage 만)
-function pushProgress(n, done) {
-  if (!me) return;
-  api("/api/progress", "POST", done ? { add: [n] } : { remove: [n] }).catch(() => {});
-}
-
-/* ---------- auth ---------- */
-function renderAuth() {
-  const box = $("#auth-area");
-  box.replaceChildren();
-  if (me) {
-    const hello = el("span", { className: "hello" });
-    hello.append(el("b", { textContent: me.nickname }), "님");
-    const out = el("button", { className: "btn ghost", textContent: "로그아웃" });
-    out.onclick = async () => { await api("/api/logout", "POST"); me = null; saveLocalDone([]); if (["/basics.html", "/python.html", "/lesson.html", "/community.html"].includes(location.pathname)) { location.href = "/"; return; } renderAuth(); renderRoadmap(); loadPosts(); dispatchEvent(new Event("progress")); };
-    box.append(hello, out);
-  } else {
-    const li = el("button", { className: "btn primary", textContent: "로그인" });
-    li.onclick = () => openAuth("login");
-    box.append(li);
-  }
-}
-
-/* ---------- 비밀번호 조건 (회원가입): 8자 이상, 대문자 1개 이상, 특수문자 1개 이상. 서버(server.py)와 같은 기준 ---------- */
-const pwChecks = (v) => ({ len: v.length >= 8, upper: /[A-Z]/.test(v), special: /[!-\/:-@\[-`{-~]/.test(v) });
-const pwMessage = (c) => !c.len ? "비밀번호는 8자 이상이어야 해요." : !c.upper ? "비밀번호에 대문자를 1개 이상 넣어주세요." : !c.special ? "비밀번호에 특수문자(! @ # $ 등)를 1개 이상 넣어주세요." : "";
-function updatePwRules() {
-  const c = pwChecks($("#auth-form").password.value);
-  document.querySelectorAll("#pw-rules li").forEach((li) => li.classList.toggle("ok", c[li.dataset.r]));
-}
-$("#auth-form").password.addEventListener("input", updatePwRules);
-
-/* 비밀번호 보기/가리기 버튼 */
-function setEye(btn, show) {
-  const input = $("#auth-form")[btn.dataset.eye];
-  input.type = show ? "text" : "password";
-  btn.setAttribute("aria-pressed", String(show));
-  btn.setAttribute("aria-label", (btn.dataset.eye === "password2" ? "비밀번호 확인 " : "비밀번호 ") + (show ? "숨기기" : "보기"));
-}
-document.querySelectorAll(".pw-eye").forEach((b) => b.addEventListener("click", () => { setEye(b, b.getAttribute("aria-pressed") !== "true"); $("#auth-form")[b.dataset.eye].focus(); }));
-
-let authSwapTimer = 0;
-function paintAuth(mode) {
-  const signup = mode === "signup";
-  $("#auth-title").textContent = signup ? "회원가입" : "로그인";
-  $("#auth-submit").textContent = signup ? "가입하기" : "로그인";
-  $("#auth-switch-text").textContent = signup ? "이미 계정이 있나요?" : "아직 계정이 없나요?";
-  $("#auth-switch").textContent = signup ? "로그인" : "회원가입";
-  const pw = $("#auth-form").password;
-  pw.autocomplete = signup ? "new-password" : "current-password";
-  pw.placeholder = signup ? "8자 이상, 대문자·특수문자 포함" : "비밀번호";
-  if (signup) pw.minLength = 8; else pw.removeAttribute("minlength"); // 로그인은 예전 비밀번호도 받아야 하므로 조건 없음
-  const pw2 = $("#auth-form").password2;
-  pw2.required = signup; pw2.value = "";
-  document.querySelectorAll(".pw-eye").forEach((b) => setEye(b, false)); // 모드를 바꾸면 다시 가려 둠
-  updatePwRules();
-  $("#auth-err").classList.remove("info");
-  $("#auth-err").textContent = "";
-  $("#auth-form").classList.toggle("is-signup", signup); // 가입 안내글은 회원가입 화면에서만 펼쳐짐
-}
-
-function openAuth(mode) {
-  const dialog = $("#auth-dialog"), form = $("#auth-form");
-  clearTimeout(authSwapTimer);
-  authMode = mode;
-  // 이미 열려 있는 창에서 로그인 ↔ 회원가입을 바꿀 때는 글이 살짝 사라졌다가 새 글이 부드럽게 나타남
-  const swapping = dialog.open && !matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (swapping) {
-    form.classList.add("swapping");
-    authSwapTimer = setTimeout(() => { paintAuth(mode); form.classList.remove("swapping"); }, 170);
-  } else {
-    form.classList.remove("swapping");
-    paintAuth(mode);
-    if (!dialog.open) dialog.showModal();
-  }
-}
-
-$("#auth-switch").onclick = (e) => { e.preventDefault(); openAuth(authMode === "login" ? "signup" : "login"); };
-
-$("#auth-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const f = e.target;
-  $("#auth-err").classList.remove("info");
-  if (authMode === "signup") {
-    const msg = pwMessage(pwChecks(f.password.value));
-    if (msg) { $("#auth-err").textContent = msg; return; }
-    if (f.password.value !== f.password2.value) { $("#auth-err").textContent = "비밀번호가 서로 달라요. 같은 비밀번호를 한 번 더 입력해 주세요."; f.password2.focus(); return; }
-  }
-  try {
-    const data = await api(authMode === "signup" ? "/api/signup" : "/api/login", "POST",
-      { nickname: f.nickname.value, password: f.password.value });
-    me = data.user;
-    const next = pendingNext; pendingNext = null; // 창이 닫히면서 값이 지워지기 전에 챙겨 둠
-    f.reset();
-    document.querySelectorAll(".pw-eye").forEach((b) => setEye(b, false));
-    $("#auth-dialog").close();
-    renderAuth();
-    loadPosts();
-    await syncProgress();
-    renderRoadmap();
-    if (next) location.href = next;
-  } catch (err) {
-    $("#auth-err").classList.remove("info");
-    $("#auth-err").textContent = err.message;
-  }
-});
-
-$("#auth-dialog").addEventListener("close", () => { pendingNext = null; });
-document.querySelectorAll("[data-close]").forEach((b) => (b.onclick = () => b.closest("dialog").close()));
+function pushProgress() {}
 
 /* ---------- community ---------- */
 function fmtDate(sec) {
@@ -245,18 +123,12 @@ async function loadPosts() {
         el("h4", { textContent: p.title })),
       el("p", { className: "body", textContent: p.body }));
     const meta = el("div", { className: "meta" }, el("span", { textContent: p.nickname }), el("span", { textContent: fmtDate(p.created) }));
-    if (me && me.nickname === p.nickname) {
-      const del = el("button", { className: "del", textContent: "삭제" });
-      del.onclick = async () => { if (confirm("이 글을 삭제할까요?")) { await api(`/api/posts/${p.id}`, "DELETE"); loadPosts(); } };
-      meta.append(del);
-    }
     card.append(meta);
     board.append(card);
   });
 }
 
 if ($("#write-btn")) $("#write-btn").onclick = () => {
-  if (!me) return openAuth("login");
   $("#post-err").textContent = "";
   $("#post-dialog").showModal();
 };
@@ -265,7 +137,7 @@ if ($("#post-form")) $("#post-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const f = e.target;
   try {
-    await api("/api/posts", "POST", { category: f.category.value, title: f.title.value, body: f.body.value });
+    await api("/api/posts", "POST", { category: f.category.value, title: f.title.value, body: f.body.value, author: f.author.value });
     f.title.value = f.body.value = "";
     $("#post-dialog").close();
     loadPosts();
@@ -276,34 +148,4 @@ if ($("#post-form")) $("#post-form").addEventListener("submit", async (e) => {
 
 /* ---------- init ---------- */
 renderRoadmap();
-const meReady = api("/api/me").then(async (d) => {
-  me = d.user; renderAuth(); loadPosts(); await syncProgress(); renderRoadmap();
-  // 로그인 없이 주소로 바로 들어오려다 홈으로 넘어온 경우(?next=...): 로그인하면 그 페이지로 보내 줌
-  const next = new URLSearchParams(location.search).get("next");
-  if (next && NEXT_OK.test(next)) {
-    if (me) { location.replace(next); return; }
-    pendingNext = next;
-    openAuth("login");
-    authNotice("이 페이지는 로그인 후에 이용할 수 있어요.");
-    history.replaceState(null, "", location.pathname);
-  }
-});
-
-/* ---------- 로그인이 필요한 링크 (data-auth="이름") ----------
-   로그인 전이면 이동하지 않고 로그인 창을 띄우고, 로그인에 성공하면 그 링크로 이동. 로그인 후에는 그대로 이동. */
-function authNotice(text) {
-  const e = $("#auth-err");
-  e.textContent = text;
-  e.classList.add("info");
-}
-document.addEventListener("click", async (e) => {
-  const a = e.target.closest("a[data-auth]");
-  if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // 새 탭 열기는 서버가 막아 줌
-  e.preventDefault();
-  await meReady;
-  const href = a.getAttribute("href");
-  if (me) { location.href = href; return; }
-  pendingNext = href;
-  openAuth("login");
-  authNotice(`${a.dataset.auth} 이용은 로그인 후에 할 수 있어요.`);
-});
+loadPosts();

@@ -23,9 +23,8 @@ PORT = int(os.environ.get("PORT") or 3000)
 HOST = "0.0.0.0" if os.environ.get("PORT") else "127.0.0.1"   # 배포 환경(PORT 지정)에서는 외부 접속 허용
 CATEGORIES = {"teacher_wanted": "강사 구해요", "teacher_offer": "강사 해요", "free": "자유게시판", "qna": "질문"}
 SESSION_SECONDS = 60 * 60 * 24 * 14
+LAST_POST = {}  # 접속지별 마지막 글쓰기 시각 (도배 방지)
 LESSON_MAX = 18  # static/app.js 의 LESSONS 개수와 맞출 것
-# 로그인해야 이용할 수 있는 페이지 (컴퓨터 기초 / 학습 / 커뮤니티). 로그인 안 했으면 홈으로 보내 로그인 창을 띄움
-LOGIN_REQUIRED_PAGES = {"/basics.html", "/python.html", "/lesson.html", "/community.html"}
 
 
 def db():
@@ -51,6 +50,8 @@ def init_db():
               PRIMARY KEY(user_id, lesson));
             """
         )
+        if "author" not in [r[1] for r in c.execute("PRAGMA table_info(posts)")]:   # 로그인 없이 쓰는 글의 이름
+            c.execute("ALTER TABLE posts ADD COLUMN author TEXT")
         # 닉네임 중복 검사용 열: 대소문자·_ 제거·헷갈리는 글자(0/O, 1/l/I)를 같게 접은 값. 기존 회원도 채워 넣음
         cols = [r[1] for r in c.execute("PRAGMA table_info(users)")]
         if "nick_key" not in cols:
@@ -170,84 +171,21 @@ class Handler(BaseHTTPRequestHandler):
     # ---------- routing ----------
     def do_GET(self):
         url = urlparse(self.path)
-        if url.path == "/api/me":
-            u = self.current_user()
-            return self.send_json({"user": dict(u) if u else None})
         if url.path == "/api/posts":
-            if not self.current_user():  # 커뮤니티는 로그인해야 이용: 글 목록도 주소로 직접 읽을 수 없게
-                return self.error("로그인이 필요합니다.", 401)
             return self.list_posts(parse_qs(url.query))
-        if url.path == "/api/progress":
-            return self.get_progress()
-        if url.path in LOGIN_REQUIRED_PAGES and not self.current_user():
-            self.send_response(302)  # 홈으로 보내고, 로그인하면 원래 가려던 곳(next)으로 이동
-            self.send_header("Location", "/?login=1&next=" + quote(self.path, safe=""))
-            self.send_header("Cache-Control", "no-store")
-            self.send_header("Content-Length", "0")
-            self.end_headers()
-            return
         self.serve_static(url.path)
 
     def do_POST(self):
         path = urlparse(self.path).path
-        routes = {"/api/signup": self.signup, "/api/login": self.login,
-                  "/api/logout": self.logout, "/api/posts": self.create_post,
-                  "/api/progress": self.set_progress}
-        (routes.get(path) or (lambda: self.error("Not found", 404)))()
-
-    def do_DELETE(self):
-        m = re.fullmatch(r"/api/posts/(\d+)", urlparse(self.path).path)
-        if not m:
-            return self.error("Not found", 404)
-        u = self.current_user()
-        if not u:
-            return self.error("로그인이 필요합니다.", 401)
-        with db() as c:
-            cur = c.execute("DELETE FROM posts WHERE id = ? AND user_id = ?", (int(m[1]), u["id"]))
-        self.send_json({"ok": cur.rowcount > 0})
-
-    # ---------- auth ----------
-    def signup(self):
-        d = self.read_json()
-        nick, pw = str(d.get("nickname", "")).strip(), str(d.get("password", ""))
-        bad = nickname_error(nick)
-        if bad:
-            return self.error(bad[1], bad[0])
-        msg = password_error(pw)
-        if msg:
-            return self.error(msg)
-        salt = secrets.token_hex(16)
-        try:
-            with db() as c:
-                cur = c.execute("INSERT INTO users(nickname,salt,pw_hash,created,nick_key) VALUES(?,?,?,?,?)",
-                                (nick, salt, hash_pw(pw, salt), time.time(), nick_key(nick)))
-                uid = cur.lastrowid
-        except sqlite3.IntegrityError:
-            return self.error("이미 사용 중이거나 비슷한 닉네임이에요.", 409)
-        self.send_json({"user": {"id": uid, "nickname": nick}}, extra_headers=[self.start_session(uid)])
-
-    def login(self):
-        d = self.read_json()
-        nick, pw = str(d.get("nickname", "")).strip(), str(d.get("password", ""))
-        with db() as c:
-            row = c.execute("SELECT * FROM users WHERE nickname = ? COLLATE NOCASE", (nick,)).fetchone()
-        if not row or not secrets.compare_digest(hash_pw(pw, row["salt"]), row["pw_hash"]):
-            return self.error("닉네임 또는 비밀번호가 올바르지 않아요.", 401)
-        self.send_json({"user": {"id": row["id"], "nickname": row["nickname"]}},
-                       extra_headers=[self.start_session(row["id"])])
-
-    def logout(self):
-        t = self.token()
-        if t:
-            with db() as c:
-                c.execute("DELETE FROM sessions WHERE token = ?", (t,))
-        self.send_json({"ok": True}, extra_headers=[("Set-Cookie", "session=; Path=/; Max-Age=0")])
+        if path == "/api/posts":
+            return self.create_post()
+        self.error("Not found", 404)
 
     # ---------- community ----------
     def list_posts(self, q):
         cat = (q.get("category") or [""])[0]
-        sql = ("SELECT p.id, p.category, p.title, p.body, p.created, u.nickname FROM posts p "
-               "JOIN users u ON u.id = p.user_id ")
+        sql = ("SELECT p.id, p.category, p.title, p.body, p.created, COALESCE(NULLIF(p.author, ''), u.nickname, '익명') AS nickname "
+               "FROM posts p LEFT JOIN users u ON u.id = p.user_id ")
         args = []
         if cat in CATEGORIES:
             sql += "WHERE p.category = ? "
@@ -258,42 +196,22 @@ class Handler(BaseHTTPRequestHandler):
         self.send_json({"posts": rows, "categories": CATEGORIES})
 
     def create_post(self):
-        u = self.current_user()
-        if not u:
-            return self.error("로그인이 필요합니다.", 401)
+        ip = self.headers.get("X-Forwarded-For", self.client_address[0]).split(",")[0].strip()
+        now = time.time()
+        if now - LAST_POST.get(ip, 0) < 20:   # 도배 방지: 같은 접속지에서 20초에 한 번
+            return self.error("글은 20초에 한 번만 쓸 수 있어요. 잠시 후 다시 시도해 주세요.", 429)
         d = self.read_json()
         cat, title, body = d.get("category"), str(d.get("title", "")).strip(), str(d.get("body", "")).strip()
+        author = re.sub(r"\s+", " ", str(d.get("author", ""))).strip()[:12] or "익명"
         if cat not in CATEGORIES:
             return self.error("카테고리를 선택해주세요.")
         if not (1 <= len(title) <= 80) or not (1 <= len(body) <= 3000):
             return self.error("제목(80자 이내)과 내용(3000자 이내)을 입력해주세요.")
+        LAST_POST[ip] = now
         with db() as c:
-            cur = c.execute("INSERT INTO posts(user_id,category,title,body,created) VALUES(?,?,?,?,?)",
-                            (u["id"], cat, title, body, time.time()))
+            cur = c.execute("INSERT INTO posts(user_id,category,title,body,created,author) VALUES(?,?,?,?,?,?)",
+                            (0, cat, title, body, now, author))
         self.send_json({"id": cur.lastrowid}, 201)
-
-    # ---------- progress ----------
-    def get_progress(self):
-        """내 완료 목록(로그인 시) + 가입자 수 + 과정별 완료 인원. 집계 숫자만 내보내 개인 기록은 드러나지 않음."""
-        u = self.current_user()
-        with db() as c:
-            users = c.execute("SELECT COUNT(*) FROM users").fetchone()[0]
-            counts = {str(r[0]): r[1] for r in c.execute("SELECT lesson, COUNT(*) FROM progress GROUP BY lesson")}
-            mine = [r[0] for r in c.execute("SELECT lesson FROM progress WHERE user_id = ? ORDER BY lesson", (u["id"],))] if u else None
-        self.send_json({"me": mine, "users": users, "counts": counts})
-
-    def set_progress(self):
-        u = self.current_user()
-        if not u:
-            return self.error("로그인이 필요합니다.", 401)
-        d = self.read_json()
-        ok = lambda v: [n for n in (v if isinstance(v, list) else []) if isinstance(n, int) and 1 <= n <= LESSON_MAX]
-        add, rem = ok(d.get("add")), ok(d.get("remove"))
-        with db() as c:
-            c.executemany("INSERT OR IGNORE INTO progress VALUES(?,?,?)", [(u["id"], n, time.time()) for n in add])
-            c.executemany("DELETE FROM progress WHERE user_id = ? AND lesson = ?", [(u["id"], n) for n in rem])
-            mine = [r[0] for r in c.execute("SELECT lesson FROM progress WHERE user_id = ? ORDER BY lesson", (u["id"],))]
-        self.send_json({"me": mine})
 
     # ---------- static ----------
     def serve_static(self, path):

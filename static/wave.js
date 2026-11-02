@@ -340,7 +340,7 @@
   const pct = (v) => Math.round(v * 100);
 
   function stateFrom(d) {
-    if (!N) return { mode: "empty", h2: "곧 과정이 열려요", p: d.me ? "새 과정이 열리면 여기에 그려져요." : "로그인하면 내 진행도를 볼 수 있어요.", values: [], vis: [], callout: -1, role: "", sr: [] };
+    if (!N) return { mode: "empty", h2: "곧 과정이 열려요", p: d.me ? "새 과정이 열리면 여기에 그려져요." : "곧 과정이 열려요.", values: [], vis: [], callout: -1, role: "", sr: [] };
     if (d.me) {                                             // 로그인: 완료 1 / 미완료 0
       const done = lessonNos.map((no) => (d.me.includes(no) ? 1 : 0)), n = done.reduce((a, b) => a + b, 0);
       const srOf = (no, i) => (done[i] ? "완료" : "미완료");
@@ -361,11 +361,10 @@
   }
   const errorState = (again) => Object.assign(build("error", demo, "진행도를 불러오지 못했어요", again ? "새로고침하면 다시 시도해요." : "잠시 후 다시 시도할게요.", N ? 0 : -1, "첫 과정", () => "예시"), { err: true });
 
-  async function fetchProgress(signal) {
-    const res = await fetch("/api/progress", { signal, cache: "no-store" });
-    if (!res.ok) throw new Error(res.status);
-    const d = await res.json();
-    return { me: Array.isArray(d.me) ? d.me : null, users: Number(d.users) || 0, counts: d.counts && typeof d.counts === "object" ? d.counts : {} };
+  async function fetchProgress() {   // 완료 기록은 이 기기(localStorage)에 있음
+    let done = [];
+    try { done = JSON.parse(localStorage.getItem("done") || "[]"); } catch {}
+    return { me: Array.isArray(done) ? done : [], users: 0, counts: {} };
   }
 
   function say(title, text) { h2.textContent = title; sub.textContent = text; }
