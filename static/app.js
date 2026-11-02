@@ -132,7 +132,6 @@ $("#auth-form").password.addEventListener("input", updatePwRules);
 function setEye(btn, show) {
   const input = $("#auth-form")[btn.dataset.eye];
   input.type = show ? "text" : "password";
-  btn.textContent = show ? "숨기기" : "보기";
   btn.setAttribute("aria-pressed", String(show));
   btn.setAttribute("aria-label", (btn.dataset.eye === "password2" ? "비밀번호 확인 " : "비밀번호 ") + (show ? "숨기기" : "보기"));
 }
